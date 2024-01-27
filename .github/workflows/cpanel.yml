@@ -1,0 +1,32 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 14
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build
+      run: npm run build
+
+    - name: Deploy to Namecheap
+      uses: namecheap/namecheap-deploy-action@v1
+      with:
+        server: business87
+        username: ${{ secrets.NAMECHEAP_USERNAME }}
+        password: ${{ secrets.NAMECHEAP_PASSWORD }}
+        directory: /home/zedaeeqz/zedapp
