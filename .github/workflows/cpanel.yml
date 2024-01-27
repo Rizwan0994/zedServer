@@ -24,9 +24,11 @@ jobs:
       run: npm run build
 
     - name: Deploy to Namecheap
-      uses: namecheap/namecheap-deploy-action@v1
+      uses: appleboy/ssh-action@master
       with:
-        server: business87
-        username: ${{ secrets.NAMECHEAP_USERNAME }}
-        password: ${{ secrets.NAMECHEAP_PASSWORD }}
-        directory: /home/zedaeeqz/zedapp
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.NAMECHEAP_PASSWORD }}
+        password: ${{ secrets.NAMECHEAP_USERNAME }}
+        script: |
+          cd /home/zedaeeqz/zedapp
+          git pull
