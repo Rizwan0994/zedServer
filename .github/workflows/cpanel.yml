@@ -20,14 +20,11 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: Deploy to Namecheap
-      uses: appleboy/ssh-action@master
+  - name: Setup SSH
+      uses: webfactory/ssh-agent@v20
       with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.NAMECHEAP_USERNAME }}
-        password: ${{ secrets.NAMECHEAP_PASSWORD }}
-        port: 21098
-        debug: true
-        script: |
-          cd /home/zedaeeqz/zedapp
-          git pull
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Deploy to Namecheap
+      run: |
+        ssh -o StrictHostKeyChecking=no zedaeeqz@162.0.209.71 'cd /home/zedaeeqz/zedapp && git pull'
