@@ -20,15 +20,12 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: Build
-      run: npm run build
-
     - name: Deploy to Namecheap
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
-        username: ${{ secrets.NAMECHEAP_PASSWORD }}
-        password: ${{ secrets.NAMECHEAP_USERNAME }}
+        username: ${{ secrets.NAMECHEAP_USERNAME }}
+        password: ${{ secrets.NAMECHEAP_PASSWORD }}
         script: |
           cd /home/zedaeeqz/zedapp
           git pull
