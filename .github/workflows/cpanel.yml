@@ -26,6 +26,7 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.NAMECHEAP_USERNAME }}
         password: ${{ secrets.NAMECHEAP_PASSWORD }}
+        port: 21098
         debug: true
         script: |
           cd /home/zedaeeqz/zedapp
