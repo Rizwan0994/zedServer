@@ -11,9 +11,9 @@ const router = express.Router();
 router.post('/signup', signupController);
 
 // Signin: Authenticate a user
-router.get('/signin', signinController);
+router.post('/signin', signinController);
 // Verify send otp by email
-router.get('/verify',verifyOTPOtp)
+router.post('/verify',verifyOTPOtp)
 // Resend OTP
 router.post('/resendOTP', resendOTPController);
 // Reset password

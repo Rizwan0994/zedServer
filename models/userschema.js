@@ -8,7 +8,6 @@ const userSchema = new mongoose.Schema({
   mobileNumber: {
     type: String,
     required: true,
-    unique: true,
   },
   email: {
     type: String,
@@ -23,11 +22,15 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-   Otp: {
+  otp: {
     type: String,
     required: true,
   },
-
+  otpTimestamp: {
+    type: Date,
+  },
+}, {
+  timestamps: true, // This will add createdAt and updatedAt fields
 });
 
 const User = mongoose.model('User', userSchema);

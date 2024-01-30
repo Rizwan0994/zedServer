@@ -1,10 +1,7 @@
 const User = require('../models/userschema');
-const connectDB = require('../connection/db');
 const crypto = require('crypto');
 
 const signinController = async (req, res) => {
-
-
   try {
     const { email, password } = req.body;
 
@@ -13,13 +10,18 @@ const signinController = async (req, res) => {
 
     // If user doesn't exist or password is incorrect, return error
     if (!user || !comparePasswords(password, user.password)) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ success: false, message: 'Invalid email or password' });
+    }
+
+    // Check if the user is verified
+    if (!user.isVerified) {
+      return res.status(401).json({ success: false, message: 'User not verified. Please complete the signup process.' });
     }
 
     // Return success message or user data
-    res.status(200).json({ message: 'Sign in successful', user: user });
+    res.status(200).json({ success: true, message: 'Sign in successful', user: user });
   } catch (error) {
-    res.status(400).json({ message: 'Error signing in', error: error.message });
+    res.status(500).json({ success: false, message: 'Error signing in', error: error.message });
   }
 };
 
