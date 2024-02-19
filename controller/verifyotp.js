@@ -3,6 +3,7 @@ const User = require('../models/userschema');
 const verifyOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
+   
 
     // Find the user by email
     const user = await User.findOne({ email });
@@ -22,7 +23,7 @@ const verifyOTP = async (req, res) => {
     }
 
     // Check if OTP is expired (you should adjust the expiration time as needed)
-    const otpExpirationTime = 10 * 60 * 1000; // 10 minutes in milliseconds
+    const otpExpirationTime = 5 * 60 * 1000; // 5 minutes in milliseconds
     const currentTime = new Date().getTime();
 
     if (user.otpTimestamp && currentTime - user.otpTimestamp > otpExpirationTime) {

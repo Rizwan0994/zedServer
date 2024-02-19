@@ -31,6 +31,22 @@ const restaurantController = {
     }
   },
 
+ // Find a restaurant by ID
+// Find a restaurant by ID
+findById: async (req, res) => {
+  try {
+    const { restaurantId } = req.params;
+    console.log(restaurantId);
+    const restaurant = await Restaurant.findById(restaurantId);
+
+    if (!restaurant) {
+      return res.status(404).json({ success: false, message: 'Restaurant not found' });
+    }
+    res.status(200).json({ success: true, restaurant });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error finding restaurant', error: error.message });
+  }
+}, 
   // Update a restaurant
   update: async (req, res) => {
     try {

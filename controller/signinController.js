@@ -1,5 +1,6 @@
 const User = require('../models/userschema');
 const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
 
 const signinController = async (req, res) => {
   try {
@@ -18,8 +19,11 @@ const signinController = async (req, res) => {
       return res.status(401).json({ success: false, message: 'User not verified. Please complete the signup process.' });
     }
 
-    // Return success message or user data
-    res.status(200).json({ success: true, message: 'Sign in successful', user: user });
+    // Create a token
+    const token = jwt.sign({ id: user._id }, 'zedApp', { expiresIn: '1h' });
+
+    // Return success message, user data and token
+    res.status(200).json({ success: true, message: 'Sign in successful', user: user, token: token });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error signing in', error: error.message });
   }

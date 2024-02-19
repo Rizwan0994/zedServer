@@ -4,6 +4,7 @@ const restaurantController = require('../controller/restaurants/restaurantContro
 
 router.post('/create', restaurantController.create);
 router.get('/list', restaurantController.list);
+router.get('/:restaurantId', restaurantController.findById);
 router.put('/update', restaurantController.update);
 router.delete('/delete', restaurantController.delete);
 

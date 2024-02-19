@@ -1,8 +1,14 @@
+// index.js
+
 const express = require('express');
+const http = require('http');
 const authRoutes = require('./router/authRoutes');
 const connectDB = require('./connection/db');
 const restaurantRoutes = require('./router/restaurantRoutes');
+const orderRoutes = require('./router/orderRoutes');
 const bodyParser = require('body-parser');
+const socket = require('./socket');
+
 const app = express();
 app.use(bodyParser.json());
 app.use((req, res, next) => {
@@ -16,12 +22,15 @@ app.use(express.json());
 // Use authentication routes
 app.use('/api', authRoutes);
 app.use('/api/restaurant', restaurantRoutes);
+app.use('/api/order', orderRoutes);
 app.get('/', (req, res) => {
   res.send('ZedApp Api Serverr Running!');
 });
 
 const PORT = process.env.PORT || 443;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   connectDB();
   console.log(`Server is running on port ${PORT}`);
 });
+
+socket.init(server);

@@ -1,5 +1,6 @@
 const User = require('../models/userschema');
 const { generateOTP, sendOTPByEmail } = require('./authMiddleware');
+
 const resendOTPController = async (req, res) => {
     try {
         const { email } = req.body;
@@ -17,8 +18,9 @@ const resendOTPController = async (req, res) => {
         // Generate a new OTP
         const otp = generateOTP();
 
-        // Update the user's OTP in the database
-        user.Otp = otp;
+        // Update the user's OTP and OTP timestamp in the database
+        user.otp = otp;
+        user.otpTimestamp = new Date().getTime(); // Add this line
         await user.save();
 
         // Send the new OTP via email

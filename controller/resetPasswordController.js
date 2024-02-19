@@ -35,16 +35,11 @@
 //....simple
 const User = require('../models/userschema');
 const crypto = require('crypto');
+const { generateOTP, sendOTPByEmail } = require('./authMiddleware');
 
 const resetPasswordController = async (req, res) => {
   try {
-    const { email, newPassword, confirmPassword } = req.body;
-    console.log(email, newPassword, confirmPassword);
-
-    // Check if the new password and confirmation password match
-    if (newPassword !== confirmPassword) {
-      return res.status(400).json({ success: false, message: 'Passwords do not match' });
-    }
+    const { email } = req.body;
 
     // Find the user by email
     const user = await User.findOne({ email });
@@ -52,16 +47,20 @@ const resetPasswordController = async (req, res) => {
       return res.status(400).json({ success: false, message: 'User not found' });
     }
 
-    // Hash the new password
-    const hashedPassword = crypto.createHash('sha256').update(newPassword).digest('hex');
+    // Generate an OTP
+    const otp = generateOTP();
 
-    // Update the user's password in the database
-    user.password = hashedPassword;
+    // Save the OTP and the timestamp in the user's document
+    user.otp = otp;
+    user.otpTimestamp = new Date().getTime();
     await user.save();
 
-    res.status(200).json({ success: true, message: 'Password updated successfully' });
+    // Send the OTP via email
+    await sendOTPByEmail(email, otp);
+
+    res.status(200).json({ success: true, message: 'OTP sent successfully. Please check your email!' });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Error resetting password', error: error.message });
+    res.status(500).json({ success: false, message: 'Error sending OTP', error: error.message });
   }
 };
 

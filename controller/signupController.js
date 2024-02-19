@@ -13,29 +13,22 @@ const signupController = async (req, res) => {
     const currentTime = new Date().getTime();
 
     // Check if the existing user is verified or not
-    if (existingUser) {
-      if (existingUser.isVerified) {
-        return res.status(400).json({ success: false, message: 'User already exists and is verified' });
-      } else {
-        // Check if the existing unverified user has requested OTP within a certain time frame
-        const otpRequestTimeLimit = 5 * 60 * 1000; // 5 minutes in milliseconds
+if (existingUser) {
+  if (existingUser.isVerified) {
+    return res.status(400).json({ success: false, message: 'User already exists and is verified' });
+  } else {
+    // Generate a new OTP for the existing unverified user
+    const otp = generateOTP();
+    existingUser.otp = otp;
+    existingUser.otpTimestamp = currentTime; // Update the timestamp
+    await existingUser.save();
 
-        if (existingUser.otpTimestamp && currentTime - existingUser.otpTimestamp < otpRequestTimeLimit) {
-          return res.status(400).json({ success: false, message: 'OTP already sent. Please wait before requesting again.' });
-        }
+    // Send the OTP via email
+    await sendOTPByEmail(email, otp);
 
-        // Resend OTP to the existing unverified user
-        const otp = generateOTP();
-        existingUser.otp = otp;
-        existingUser.otpTimestamp = currentTime; // Update the timestamp
-        await existingUser.save();
-
-        // Send the OTP via email
-        await sendOTPByEmail(email, otp);
-
-        return res.status(200).json({ success: true, message: 'OTP resent successfully. Please verify!' });
-      }
-    }
+    return res.status(200).json({ success: true, message: 'OTP sent successfully. Please verify!' });
+  }
+}
 
     // Generate OTP for new user
     const otp = generateOTP();
