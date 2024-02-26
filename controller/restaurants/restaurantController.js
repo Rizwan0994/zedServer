@@ -1,19 +1,16 @@
 const Restaurant = require('../../models/restaurantSchema');
-
+const jwt = require('jsonwebtoken');
 const restaurantController = {
-  // Create a new restaurant
   // Create a new restaurant
   create: async (req, res) => {
     try {
-      const { name, address, phoneNumber, isOpen, restaurantId, items } = req.body;
+      const { name, address, phoneNumber, isOpen, items, ownerEmail, ownerPassword } = req.body;
 
-      // Check if a restaurant with the same restaurantId already exists
-      const existingRestaurant = await Restaurant.findOne({ restaurantId });
-      if (existingRestaurant) {
-        return res.status(400).json({ success: false, message: 'Restaurant with the same ID already exists' });
-      }
+      // Generate a unique restaurantId
+      const count = await Restaurant.countDocuments({});
+      const restaurantId = `RS-${count + 1}`;
 
-      const newRestaurant = new Restaurant({ name, address, phoneNumber, isOpen, restaurantId, items });
+      const newRestaurant = new Restaurant({ name, address, phoneNumber, isOpen, restaurantId, items, ownerEmail, ownerPassword });
       const savedRestaurant = await newRestaurant.save();
       res.status(200).json({ success: true, restaurant: savedRestaurant });
     } catch (error) {
@@ -66,6 +63,38 @@ findById: async (req, res) => {
       res.status(200).json({ success: true, message: 'Restaurant deleted successfully' });
     } catch (error) {
       res.status(500).json({ success: false, message: 'Error deleting restaurant', error: error.message });
+    }
+  },
+  login: async (req, res) => {
+    try {
+      const { ownerEmail, ownerPassword } = req.body;
+      const restaurant = await Restaurant.findOne({ ownerEmail, ownerPassword });
+
+      if (!restaurant) {
+        return res.status(400).json({ success: false, message: 'Invalid email or password' });
+      }
+
+      // Create and assign a token
+      const token = jwt.sign({ _id: restaurant._id }, 'zedApp');
+      res.header('auth-token', token).status(200).json({ success: true, restaurant, token });
+    } catch (error) {
+      res.status(500).json({ success: false, message: 'Error logging in', error: error.message });
+    }
+  },
+  addItem: async (req, res) => {
+    try {
+      const { restaurantId, item } = req.body;
+      const restaurant = await Restaurant.findOne({ restaurantId });
+
+      if (!restaurant) {
+        return res.status(400).json({ success: false, message: 'Restaurant not found' });
+      }
+
+      restaurant.items.push(item);
+      const updatedRestaurant = await restaurant.save();
+      res.status(200).json({ success: true, restaurant: updatedRestaurant });
+    } catch (error) {
+      res.status(500).json({ success: false, message: 'Error adding item', error: error.message });
     }
   },
 };

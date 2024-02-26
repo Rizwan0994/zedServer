@@ -1,6 +1,6 @@
 // controllers/orderController.js
 
-const Order = require('../models/orderSchema');
+const Order = require('../../models/orderSchema');
 
 const orderController = {
   placeOrder: async (req, res) => {

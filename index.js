@@ -6,6 +6,7 @@ const authRoutes = require('./router/authRoutes');
 const connectDB = require('./connection/db');
 const restaurantRoutes = require('./router/restaurantRoutes');
 const orderRoutes = require('./router/orderRoutes');
+const superAdminRoutes = require('./router/superAdminRoutes');
 const bodyParser = require('body-parser');
 const socket = require('./socket');
 
@@ -23,6 +24,7 @@ app.use(express.json());
 app.use('/api', authRoutes);
 app.use('/api/restaurant', restaurantRoutes);
 app.use('/api/order', orderRoutes);
+app.use('/api/superAdmin', superAdminRoutes);
 app.get('/', (req, res) => {
   res.send('ZedApp Api Serverr Running!');
 });
