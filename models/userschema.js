@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  userType:{
+    type: String,
+    default: 'user',
+  },
   otp: {
     type: String,
     

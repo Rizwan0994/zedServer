@@ -13,22 +13,22 @@ const signupController = async (req, res) => {
     const currentTime = new Date().getTime();
 
     // Check if the existing user is verified or not
-if (existingUser) {
-  if (existingUser.isVerified) {
-    return res.status(400).json({ success: false, message: 'User already exists and is verified' });
-  } else {
-    // Generate a new OTP for the existing unverified user
-    const otp = generateOTP();
-    existingUser.otp = otp;
-    existingUser.otpTimestamp = currentTime; // Update the timestamp
-    await existingUser.save();
+    if (existingUser) {
+      if (existingUser.isVerified) {
+        return res.status(400).json({ success: false, message: 'User already exists and is verified' });
+      } else {
+        // Generate a new OTP for the existing unverified user
+        const otp = generateOTP();
+        existingUser.otp = otp;
+        existingUser.otpTimestamp = currentTime; // Update the timestamp
+        await existingUser.save();
 
-    // Send the OTP via email
-    await sendOTPByEmail(email, otp);
+        // Send the OTP via email
+        await sendOTPByEmail(email, otp);
 
-    return res.status(200).json({ success: true, message: 'OTP sent successfully. Please verify!' });
-  }
-}
+        return res.status(200).json({ success: true, message: 'OTP sent successfully. Please verify!' });
+      }
+    }
 
     // Generate OTP for new user
     const otp = generateOTP();
@@ -38,12 +38,20 @@ if (existingUser) {
 
     // Create a new user
     const newUser = new User({ name, mobileNumber, email, password: hashedPassword, otp, otpTimestamp: currentTime });
-    const savedUser = await newUser.save();
 
-    // Send the OTP via email
-    await sendOTPByEmail(email, otp);
+    try {
+      const savedUser = await newUser.save();
+      // Send the OTP via email
+      await sendOTPByEmail(email, otp);
 
-    res.status(200).json({ success: true, message: 'OTP sent successfully. Please verify!' });
+      res.status(200).json({ success: true, message: 'OTP sent successfully. Please verify!' });
+    } catch (error) {
+      if (error.code === 11000) {
+        // Handle duplicate key error (email already exists)
+        return res.status(400).json({ success: false, message: 'Number already exists' });
+      }
+      throw error; // Re-throw other errors
+    }
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error signing up', error: error.message });
   }

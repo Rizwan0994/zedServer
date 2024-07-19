@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const SuperAdmin = require('../../models/superAdminSchema');
-
+//not used file..........
 const superAdminController = {
   login: async (req, res) => {
     try {

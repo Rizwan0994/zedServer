@@ -11,7 +11,7 @@ module.exports = {
     io.on('connection', (socket) => {
       console.log('New client connected');
 
-      socket.on('orderStatusChange', async ({ orderId, status }) => {
+      socket.on(`orderStatusChange`, async ({ orderId, status }) => {
         try {
           const order = await Order.findById(orderId);
           if (!order) {
@@ -19,7 +19,7 @@ module.exports = {
           }
           order.order_status = status;
           await order.save();
-          io.emit('orderStatusChanged', { orderId, status });
+          io.emit(`orderStatusChanged`, { orderId, status });
         } catch (error) {
           socket.emit('error', error.message);
         }

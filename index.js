@@ -7,6 +7,7 @@ const connectDB = require('./connection/db');
 const restaurantRoutes = require('./router/restaurantRoutes');
 const orderRoutes = require('./router/orderRoutes');
 const superAdminRoutes = require('./router/superAdminRoutes');
+const userRoutes = require('./router/routes');
 const bodyParser = require('body-parser');
 const socket = require('./socket');
 
@@ -22,6 +23,7 @@ app.use((req, res, next) => {
 app.use(express.json());
 // Use authentication routes
 app.use('/api', authRoutes);
+app.use('/api/user', userRoutes);
 app.use('/api/restaurant', restaurantRoutes);
 app.use('/api/order', orderRoutes);
 app.use('/api/superAdmin', superAdminRoutes);

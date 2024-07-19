@@ -19,17 +19,18 @@ const signinController = async (req, res) => {
       return res.status(401).json({ success: false, message: 'User not verified. Please complete the signup process.' });
     }
 
-    // Create a token
-    const token = jwt.sign({ id: user._id }, 'zedApp', { expiresIn: '1h' });
+    // For user
+const userToken = jwt.sign({ id: user._id, userType: 'user' }, 'zedApp');
 
     // Return success message, user data and token
-    res.status(200).json({ success: true, message: 'Sign in successful', user: user, token: token });
+    res.status(200).json({ success: true, message: 'Sign in successful', user: user, token: userToken });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error signing in', error: error.message });
   }
 };
 
 // Function to compare passwords
+
 const comparePasswords = (password, hashedPassword) => {
   const hash = crypto.createHash('sha256').update(password).digest('hex');
   return hash === hashedPassword;
