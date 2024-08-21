@@ -1,10 +1,7 @@
-// models/orderSchema.js
-
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const orderSchema = new Schema({
-  // items: [{ type: Schema.Types.ObjectId, ref: 'Item' }],
   items: [{
     name: String,
     quantity: Number
@@ -17,7 +14,7 @@ const orderSchema = new Schema({
   delivery_fee: Number,
   delivery_address: String,
   special_note: String,
-  payment_method: String,
+  payment_method: String,  // Updated
   order_status: { type: String, enum: ['accepted', 'cooking', 'out_for_delivery', 'delivered', 'rejected'], default: 'accepted' },
 }, { timestamps: true });
 

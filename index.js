@@ -8,6 +8,7 @@ const restaurantRoutes = require('./router/restaurantRoutes');
 const orderRoutes = require('./router/orderRoutes');
 const superAdminRoutes = require('./router/superAdminRoutes');
 const userRoutes = require('./router/routes');
+const paymentRoutes = require('./router/paymentRoutes');
 const bodyParser = require('body-parser');
 const socket = require('./socket');
 
@@ -25,6 +26,7 @@ app.use(express.json());
 app.use('/api', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/restaurant', restaurantRoutes);
+app.use('/api/payment', paymentRoutes);
 app.use('/api/order', orderRoutes);
 app.use('/api/superAdmin', superAdminRoutes);
 app.get('/', (req, res) => {
